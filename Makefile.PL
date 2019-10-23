@@ -55,6 +55,7 @@ my %module = (
         'JSON'                      => 0,
         'XML::RSS'                  => 0,
         'XML::Feed'                 => 0,
+        'Text::Markdown'            => 0,
 		'DateTime'                  => 0,
 		'DateTime::Format::ISO8601' => 0,
     },

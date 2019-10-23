@@ -10,6 +10,7 @@ use GitHub::RSS;
 use XML::Feed;
 use DateTime;
 use DateTime::Format::ISO8601;
+use Text::Markdown;
 
 GetOptions(
     'filter=s' => \my $issue_regex,
@@ -40,7 +41,8 @@ my @comments = map {
     $entry->link( $_->{html_url} );
 
     # Convert from md to html, url-encode
-    $entry->content( $_->{body} );
+    my $body = Text::Markdown->new->markdown( $_->{body} );
+    $entry->content( $body );
     $entry->author( $_->{user_login} );
 
     my $modified_or_created = DateTime::Format::ISO8601->parse_datetime(
