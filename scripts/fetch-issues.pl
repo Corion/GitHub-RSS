@@ -6,7 +6,6 @@ use Data::Dumper;
 use feature 'signatures';
 no warnings 'experimental::signatures';
 use Getopt::Long;
-use Text::CleanFragment 'clean_fragment';
 use GitHub::RSS;
 
 GetOptions(
