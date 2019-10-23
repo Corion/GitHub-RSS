@@ -53,6 +53,7 @@ my %module = (
         'Net::GitHub'               => 0,
         'DBD::SQLite'               => 0,
         'JSON'                      => 0,
+        'XML::RSS'                  => 0,
         'XML::Feed'                 => 0,
 		'DateTime'                  => 0,
 		'DateTime::Format::ISO8601' => 0,
