@@ -101,9 +101,9 @@ sub _read_gh_token( $self, $token_file=undef ) {
 sub fetch_issues( $self, $user = $self->default_user, $repo = $self->default_repo ) {
     my $gh = $self->gh;
     my @issues = $gh->issue->repos_issues($user => $repo);
-    #while ($gh->issue->has_next_page) {
-    #    push @issues, $gh->issue->next_page;
-    #}
+    while ($gh->issue->has_next_page) {
+        push @issues, $gh->issue->next_page;
+    }
     return @issues
 };
 
@@ -135,6 +135,7 @@ sub fetch_and_store( $self,
     my $dbh = $self->dbh;
 
     # Throw old data away instead of keeping it for diffs
+    # We should do this per-user, per-repository, or do REPLACE instead
     $dbh->do("delete from $_") for (qw(issue comment));
 
     my @issues = $self->fetch_issues( $user => $repo );
