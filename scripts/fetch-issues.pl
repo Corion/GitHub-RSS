@@ -25,4 +25,4 @@ my $gh = GitHub::RSS->new(
     },
 );
 
-$gh->fetch_and_store( $github_user => $github_store );
+$gh->fetch_and_store( $github_user => $github_repo );
