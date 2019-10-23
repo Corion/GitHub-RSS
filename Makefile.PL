@@ -59,7 +59,6 @@ my %module = (
         'Text::Markdown'            => 0,
 		'DateTime'                  => 0,
 		'DateTime::Format::ISO8601' => 0,
-		'LWP::Protocol::https'      => 0,
     },
     TEST_REQUIRES => {
     },
