@@ -37,13 +37,13 @@ $feed->link("https://github.com/$github_user/$github_repo");
 my @comments = map {
     my $entry = XML::Feed::Entry->new('RSS');
     $entry->id( $_->{id} );
-    $entry->title( "Comment by $_->{user}" );
+    $entry->title( "Comment by $_->{user}->{login}" );
     $entry->link( $_->{html_url} );
 
     # Convert from md to html, url-encode
     my $body = Text::Markdown->new->markdown( $_->{body} );
     $entry->content( $body );
-    $entry->author( $_->{user_login} );
+    $entry->author( $_->{user}->{login} );
 
     my $modified_or_created = DateTime::Format::ISO8601->parse_datetime(
         $_->{modified_at} || $_->{created_at}
