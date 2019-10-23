@@ -31,6 +31,7 @@ my $gh = GitHub::RSS->new(
 my $feed = XML::Feed->new('RSS');
 $feed->title("Github comments for $user/$repo");
 $feed->link("https://github.com/$user/$repo");
+#$feed->self("https://corion.net/github-rss/Perl-perl5.rss");
 
 my @comments = map {
     my $entry = XML::Feed::Entry->new('RSS');
