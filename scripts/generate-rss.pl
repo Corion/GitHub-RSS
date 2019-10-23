@@ -16,22 +16,22 @@ GetOptions(
     'filter=s' => \my $issue_regex,
     'issue=s' => \my $github_issue,
     'user=s' => \my $github_user,
+    'repo=s' => \my $github_repo,
+    'dbfile=s' => \my $store,
     'output-file=s' => \my $output_file,
 );
 
-my ($user,$repo) = ('Perl' => 'perl5');
-
-my $store = 'db/issues.sqlite';
+$store //= 'db/issues.sqlite';
 
 my $gh = GitHub::RSS->new(
     dbh => {
-        dsn => 'dbi:SQLite:dbname=db/issues.sqlite',
+        dsn => "dbi:SQLite:dbname=$store",
     },
 );
 
 my $feed = XML::Feed->new('RSS');
-$feed->title("Github comments for $user/$repo");
-$feed->link("https://github.com/$user/$repo");
+$feed->title("Github comments for $github_user/$github_repo");
+$feed->link("https://github.com/$github_user/$github_repo");
 #$feed->self("https://corion.net/github-rss/Perl-perl5.rss");
 
 my @comments = map {
