@@ -49,6 +49,7 @@ my %module = (
     PREREQ_PM => {
         'Filter::signatures'        => '0.09',
         'Carp'                      => 0,
+        'PerlX::Maybe'              => 0,
         'Moo'                       => 2,
         'Net::GitHub'               => 0,
         'DBD::SQLite'               => 0,

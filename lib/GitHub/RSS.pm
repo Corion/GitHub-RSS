@@ -4,6 +4,7 @@ use 5.010;
 use Moo 2;
 use feature 'signatures';
 no warnings 'experimental::signatures';
+use PerlX::Maybe;
 
 use Net::GitHub;
 use DBI;
@@ -23,7 +24,7 @@ has 'gh' => (
     is => 'ro',
     default => sub( $self ) {
         Net::GitHub->new(
-            access_token => $self->token
+            maybe access_token => $self->token
         ),
     },
 );
@@ -81,13 +82,19 @@ sub _find_gh_token_file( $self, $env=undef ) {
 
 sub _read_gh_token( $self, $token_file=undef ) {
     my $file = $token_file // $self->token_file;
-    open my $fh, '<', $file
-        or die "Couldn't open file '$file': $!";
-    binmode $fh;
-    local $/;
-    my $json = <$fh>;
-    my $token_json = decode_json( $json );
-    return $token_json->{token};
+
+    if( $file ) {
+        open my $fh, '<', $file
+            or die "Couldn't open file '$file': $!";
+        binmode $fh;
+        local $/;
+        my $json = <$fh>;
+        my $token_json = decode_json( $json );
+        return $token_json->{token};
+    } else {
+        # We'll run without a known account
+        return
+    }
 }
 
 sub fetch_issues( $self, $user = $self->default_user, $repo = $self->default_repo ) {
