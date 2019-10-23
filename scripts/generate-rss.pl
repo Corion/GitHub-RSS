@@ -12,15 +12,10 @@ use DateTime;
 use DateTime::Format::ISO8601;
 
 GetOptions(
-    'n|dry-run' => \my $dry_run,
-    'token=s' => \my $token,
-    'token-file=s' => \my $token_file,
     'filter=s' => \my $issue_regex,
-    'git=s' => \my $git,
     'issue=s' => \my $github_issue,
     'user=s' => \my $github_user,
     'output-file=s' => \my $output_file,
-    #'test' => \my $run_tests,
 );
 
 my ($user,$repo) = ('Perl' => 'perl5');
