@@ -1,0 +1,169 @@
+package GitHub::RSS;
+use strict;
+use 5.010;
+use Moo 2;
+use feature 'signatures';
+no warnings 'experimental::signatures';
+
+use Net::GitHub;
+use DBI;
+use JSON;
+
+use Data::Dumper;
+
+our $VERSION = '0.01';
+
+has 'gh' => (
+    is => 'ro',
+    default => sub( $self ) {
+        Net::GitHub->new(
+            access_token => $self->token
+        ),
+    },
+);
+
+has 'token_file' => (
+    is => 'lazy',
+    default => \&_find_gh_token_file,
+);
+
+has 'token' => (
+    is => 'lazy',
+    default => \&_read_gh_token,
+);
+
+has default_user => (
+    is => 'ro',
+);
+
+has default_repo => (
+    is => 'ro',
+);
+
+has dbh => (
+    is       => 'ro',
+    required => 1,
+    coerce   => \&_build_dbh,
+);
+
+sub _build_dbh( $args ) {
+    return $args if ref($args) eq 'DBI::db';
+    ref($args) eq 'HASH' or die 'Not a DB handle nor a hashref';
+    return DBI->connect( @{$args}{qw/dsn db_user db_password db_options/} );
+}
+
+sub _find_gh_token_file( $self, $env=undef ) {
+    $env //= \%ENV;
+
+    my $token_file;
+
+    # This should use File::User
+    for my $candidate_dir ('.',
+                           $ENV{XDG_DATA_HOME},
+                           $ENV{USERPROFILE},
+                           $ENV{HOME}
+    ) {
+        next unless defined $candidate_dir;
+        if( -f "$candidate_dir/github.credentials" ) {
+            $token_file = "$candidate_dir/github.credentials";
+            last
+        };
+    };
+
+    return $token_file
+}
+
+sub _read_gh_token( $self, $token_file=undef ) {
+    my $file = $token_file // $self->token_file;
+    open my $fh, '<', $file
+        or die "Couldn't open file '$file': $!";
+    binmode $fh;
+    local $/;
+    my $json = <$fh>;
+    my $token_json = decode_json( $json );
+    return $token_json->{token};
+}
+
+sub fetch_issues( $self, $user = $self->default_user, $repo = $self->default_repo ) {
+    my $gh = $self->gh;
+    my @issues = $gh->issue->repos_issues($user => $repo);
+    #while ($gh->issue->has_next_page) {
+    #    push @issues, $gh->issue->next_page;
+    #}
+    return @issues
+};
+
+sub fetch_issue_comments( $self, $issue_number,
+        $user=$self->default_user,
+        $repo=$self->default_repo
+    ) {
+    # Shouldn't this loop as well, just like with the issues?!
+    return $self->gh->issue->comments($user, $repo, $issue_number );
+}
+
+sub write_data( $self, $table, @rows) {
+    my @columns = sort keys %{ $rows[0] };
+    my $statement = sprintf q{insert into "%s" (%s) values (%s)},
+                        $table,
+                        join( ",", map qq{"$_"}, @columns ),
+                        join( ",", ('?') x (0+@columns))
+                        ;
+    my $sth = $self->dbh->prepare( $statement );
+    $sth->execute_for_fetch(sub { @rows ? [ @{ shift @rows }{@columns} ] : () }, \my @errors);
+    #if( @errors ) {
+    #    warn Dumper \@errors if (0+@errors);
+    #};
+}
+
+sub fetch_and_store( $self,
+                     $user = $self->default_user,
+                     $repo = $self->default_repo) {
+    my $dbh = $self->dbh;
+
+    # Throw old data away instead of keeping it for diffs
+    $dbh->do("delete from $_") for (qw(issue comment));
+
+    my @issues = $self->fetch_issues( $user => $repo );
+
+    # Munge some columns:
+    for (@issues) {
+        my $u = delete $_->{user};
+        @{ $_ }{qw( user_id user_login user_gravatar_id )}
+            = @{ $u }{qw( id login gravatar_id )};
+
+        # Squish all structure into JSON, for later
+        for (values %$_) {
+            if( ref($_) ) { $_ = encode_json($_) };
+        };
+    };
+
+    $self->write_data( 'issue' => @issues );
+
+    for my $issue (@issues) {
+        my @comments = $self->fetch_issue_comments( $issue->{number}, $user => $repo );
+
+        # Squish all structure into JSON, for later
+        for (@comments) {
+            for (values %$_) {
+                if( ref($_) ) { $_ = encode_json($_) };
+            };
+        };
+        $self->write_data( 'comment' => @comments )
+            if @comments;
+    };
+}
+
+sub comments( $self ) {
+    map {
+        $_->{user} = decode_json( $_->{user} );
+        $_
+    }
+    @{ $self->dbh->selectall_arrayref(<<'SQL', { Slice => {}}) }
+        select
+               * -- this should become an exact list, later
+          from comment
+      order by html_url
+SQL
+}
+
+1;
