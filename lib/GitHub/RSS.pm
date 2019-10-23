@@ -6,6 +6,7 @@ use feature 'signatures';
 no warnings 'experimental::signatures';
 use PerlX::Maybe;
 
+use IO::Socket::SSL;
 use Net::GitHub;
 use DBI;
 use JSON;
