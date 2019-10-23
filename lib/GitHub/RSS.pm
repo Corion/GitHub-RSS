@@ -13,6 +13,12 @@ use Data::Dumper;
 
 our $VERSION = '0.01';
 
+=head1 NAME
+
+GitHub::RSS - collect data from Github.com for feeding into RSS
+
+=cut
+
 has 'gh' => (
     is => 'ro',
     default => sub( $self ) {
