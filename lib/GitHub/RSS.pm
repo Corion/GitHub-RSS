@@ -265,7 +265,7 @@ sub store_issues_comments( $self, $user, $repo, $issues ) {
     $self->write_data( 'issue' => @$issues );
 };
 
-=head2 C<< ->fetch_and_store >>
+=head2 C<< ->fetch_and_store($user, $repo, $since) >>
 
   my $since = $gh->last_check;
   $gh->fetch_and_store($user, $repo, $since)
