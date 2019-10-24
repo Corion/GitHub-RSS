@@ -15,7 +15,6 @@ use Text::Markdown;
 
 our $VERSION = '0.01';
 
-
 =head1 SYNOPSIS
 
   generate-rss.pl --user Perl --repo perl5 --dbfile=db/issues.sqlite --output-file Perl-perl5-issues.rss
