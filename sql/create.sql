@@ -25,6 +25,7 @@ create table "issue" (
   , "html_url" varchar(1024)
   , "labels" varchar(16384)
   , "assignees" varchar(16384)
+  , "pull_request" varchar(16384)
 );
 
 create table "comment" (
