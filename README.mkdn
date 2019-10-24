@@ -2,4 +2,48 @@
 [![Travis Build Status](https://travis-ci.org/Corion/GitHub-RSS.svg?branch=master)](https://travis-ci.org/Corion/GitHub-RSS)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/Corion/GitHub-RSS?branch=master&svg=true)](https://ci.appveyor.com/project/Corion/GitHub-RSS)
 
+# NAME
 
+GitHub::RSS - collect data from Github.com for feeding into RSS
+
+# SYNOPSIS
+
+    my $gh = GitHub::RSS->new(
+        dbh => {
+            dsn => "dbi:SQLite:dbname=$store",
+        },
+    );
+
+    my $last_updated = $gh->last_check;
+    $gh->fetch_and_store( $github_user => $github_repo, $last_updated );
+    if( $verbose ) {
+        print "Updated from $last_updated to " . $gh->last_check, "\n";
+    };
+
+# METHODS
+
+## `->new`
+
+Constructs a new GitHub::RSS instance
+
+- **gh** - instance of [Net::GitHub](https://metacpan.org/pod/Net::GitHub)
+- **token\_file** - name and path of the JSON-format token file containing the
+GitHub API token By default, that file is searched for under the name
+`github.credentials` in `.`, `$ENV{XDG_DATA_HOME}`, `$ENV{USERPROFILE}`
+and `$ENV{HOME}`.
+- **token** - GitHub API token. If this is missing, it will be attempted to read
+it from the `token_file`.
+- **default\_user** - name of the GitHub user whose repos will be read
+- **default\_repo** - name of the GitHub repo whose issues will be read
+- **dbh** - premade database handle or alternatively a hashref containing
+the [DBI](https://metacpan.org/pod/DBI) arguments
+- **fetch\_additional\_pages** - number of additional pages to fetch from GitHub.
+This is relevant when catching up a database for a repository with many issues.
+
+# POD ERRORS
+
+Hey! **The above document had some coding errors, which are explained below:**
+
+- Around line 42:
+
+    &#x3d;over without closing =back

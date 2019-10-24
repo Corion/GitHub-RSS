@@ -19,6 +19,32 @@ our $VERSION = '0.01';
 
 GitHub::RSS - collect data from Github.com for feeding into RSS
 
+=head1 SYNOPSIS
+
+    my $gh = GitHub::RSS->new(
+        dbh => {
+            dsn => "dbi:SQLite:dbname=$store",
+        },
+    );
+
+    my $last_updated = $gh->last_check;
+    $gh->fetch_and_store( $github_user => $github_repo, $last_updated );
+    if( $verbose ) {
+        print "Updated from $last_updated to " . $gh->last_check, "\n";
+    };
+
+=head1 METHODS
+
+=head2 C<< ->new >>
+
+Constructs a new GitHub::RSS instance
+
+=over 4
+
+=item *
+
+B<gh> - instance of L<Net::GitHub>
+
 =cut
 
 has 'gh' => (
@@ -30,29 +56,71 @@ has 'gh' => (
     },
 );
 
+=item *
+
+B<token_file> - name and path of the JSON-format token file containing the
+GitHub API token By default, that file is searched for under the name
+C<github.credentials> in C<.>, C<$ENV{XDG_DATA_HOME}>, C<$ENV{USERPROFILE}>
+and C<$ENV{HOME}>.
+
+=cut
+
 has 'token_file' => (
     is => 'lazy',
     default => \&_find_gh_token_file,
 );
+
+=item *
+
+B<token> - GitHub API token. If this is missing, it will be attempted to read
+it from the C<token_file>.
+
+=cut
 
 has 'token' => (
     is => 'lazy',
     default => \&_read_gh_token,
 );
 
+=item *
+
+B<default_user> - name of the GitHub user whose repos will be read
+
+=cut
+
 has default_user => (
     is => 'ro',
 );
 
+=item *
+
+B<default_repo> - name of the GitHub repo whose issues will be read
+
+=cut
+
 has default_repo => (
     is => 'ro',
 );
+
+=item *
+
+B<dbh> - premade database handle or alternatively a hashref containing
+the L<DBI> arguments
+
+=cut
 
 has dbh => (
     is       => 'ro',
     required => 1,
     coerce   => \&_build_dbh,
 );
+
+=item *
+
+B<fetch_additional_pages> - number of additional pages to fetch from GitHub.
+This is relevant when catching up a database for a repository with many issues.
+
+=cut
 
 has fetch_additional_pages => (
     is => 'ro',
