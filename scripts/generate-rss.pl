@@ -77,6 +77,23 @@ my @comments = map {
     $since,
     );
 
-open my $fh, '>', $output_file
-    or die "Couldn't create '$output_file': $!";
-print {$fh} $feed->as_xml;
+sub update_file( $fn, $content ) {
+    my $needs_update = ! -e $fn;
+    if( ! $needs_update ) {
+        open my $old, '<', $fn
+            or die "Couldn't read old content from '$fn': $!";
+        binmode $old, ':utf8';
+        local $/;
+        my $old_content = <$old>;
+        $needs_update = $old_content ne $content;
+    };
+
+    if( $needs_update ) {
+        open my $fh, '>', $fn
+            or die "Couldn't create '$fn': $!";
+        binmode $fh, ':utf8';
+        print {$fh} $content;
+    };
+}
+
+update_file( $output_file, $feed->as_xml );
