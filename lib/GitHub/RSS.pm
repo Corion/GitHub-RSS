@@ -204,14 +204,29 @@ FETCH:
     }
 }
 
-sub comments( $self, $since ) {
+sub issues_and_comments( $self, $since ) {
     map {
         $_->{user} = $_->{user} ? decode_json( $_->{user} ) : +{};
         $_
     }
-    @{ $self->dbh->selectall_arrayref(<<'SQL', { Slice => {}}, $since) }
+    @{ $self->dbh->selectall_arrayref(<<'SQL', { Slice => {}}, $since, $since) }
         select
-               c.* -- this should become an exact list, later
+               i.id
+             , i.user
+             , i.html_url
+             , i.body
+             , i.created_at
+             , i.updated_at
+          from issue i
+         where i.updated_at >= ?
+      union all
+        select
+               c.id
+             , c.user
+             , c.html_url
+             , c.body
+             , c.created_at
+             , c.updated_at
           from comment c
           join issue i on c.issue_url=i.url
          where i.updated_at >= ?
