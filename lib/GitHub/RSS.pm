@@ -54,6 +54,11 @@ has dbh => (
     coerce   => \&_build_dbh,
 );
 
+has fetch_additional_pages => (
+    is => 'ro',
+    default => '1',
+);
+
 sub _build_dbh( $args ) {
     return $args if ref($args) eq 'DBI::db';
     ref($args) eq 'HASH' or die 'Not a DB handle nor a hashref';
@@ -187,18 +192,14 @@ sub fetch_and_store( $self,
     my $dbh = $self->dbh;
     my $gh = $self->gh;
 
-    # Throw old data away instead of keeping it for diffs
-    # We should do this per-user, per-repository, or do REPLACE instead
-    #$dbh->do("delete from $_") for (qw(issue comment));
+    my $can_fetch_more = $self->fetch_additional_pages;
 
 FETCH:
     my @issues = $self->fetch_issues( $user => $repo, $since );
     my $has_more = $gh->issue->has_next_page;
     $self->store_issues_comments( $user => $repo, \@issues );
 
-# Meh - we lose the information here since we fetch the comments immediately.
-# Oh well ...
-    if( $has_more ) {
+    if( $has_more and (!defined($can_fetch_more) or $can_fetch_more-- > 0)) {
         $since = $issues[-1]->{updated_at};
         goto FETCH;
     }
