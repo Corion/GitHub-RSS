@@ -139,7 +139,9 @@ sub write_data( $self, $table, @rows) {
                         join( ",", ('?') x (0+@columns))
                         ;
     my $sth = $self->dbh->prepare( $statement );
-    $sth->execute_for_fetch(sub { @rows ? [ @{ shift @rows }{@columns} ] : () }, \my @errors);
+    eval {
+        $sth->execute_for_fetch(sub { @rows ? [ @{ shift @rows }{@columns} ] : () }, \my @errors);
+    } or die Dumper \@rows;
     #if( @errors ) {
     #    warn Dumper \@errors if (0+@errors);
     #};
