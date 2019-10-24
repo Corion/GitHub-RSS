@@ -126,6 +126,8 @@ has dbh => (
 B<fetch_additional_pages> - number of additional pages to fetch from GitHub.
 This is relevant when catching up a database for a repository with many issues.
 
+=back
+
 =cut
 
 has fetch_additional_pages => (
