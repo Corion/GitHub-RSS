@@ -150,7 +150,7 @@ sub write_data( $self, $table, @rows) {
 sub store_issues_comments( $self, $user, $repo, $issues ) {
     # Munge some columns:
     for (@$issues) {
-        my $u = delete $_->{user};
+        my $u = $_->{user};
         @{ $_ }{qw( user_id user_login user_gravatar_id )}
             = @{ $u }{qw( id login gravatar_id )};
 
@@ -206,7 +206,7 @@ FETCH:
 
 sub comments( $self, $since ) {
     map {
-        $_->{user} = decode_json( $_->{user} );
+        $_->{user} = $_->{user} ? decode_json( $_->{user} ) : +{};
         $_
     }
     @{ $self->dbh->selectall_arrayref(<<'SQL', { Slice => {}}, $since) }

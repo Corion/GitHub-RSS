@@ -1,6 +1,7 @@
 create table "issue" (
     "number" decimal(16,0)
   , "id" decimal(16,0) not null primary key
+   ,"user" varchar(16384)
   , "user_id" decimal(16,0)
   , "user_login" varchar(255)
   , "user_gravatar_id" varchar(255)

@@ -66,9 +66,9 @@ my @comments = map {
     $entry->content( $body );
     $entry->author( $_->{user}->{login} );
 
-    if( $_->{modified_at} ) {
+    if( $_->{updated_at} ) {
         my $modified = DateTime::Format::ISO8601->parse_datetime(
-            $_->{modified_at}
+            $_->{updated_at}
         );
         $entry->modified( $modified );
     };
@@ -79,7 +79,7 @@ my @comments = map {
     $entry->issued( $created );
 
     $feed->add_entry( $entry );
-} $gh->comments(
+} $gh->issues_and_comments(
     #Perl => 'perl5'
     $since,
     );
