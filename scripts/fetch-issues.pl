@@ -35,6 +35,7 @@ GetOptions(
     'user=s' => \my $github_user,
     'repo=s' => \my $github_repo,
     'dbfile=s' => \my $store,
+    'verbose' => \my $verbose,
 );
 
 $store //= 'db/issues.sqlite';
@@ -47,3 +48,6 @@ my $gh = GitHub::RSS->new(
 
 my $last_updated = $gh->last_check;
 $gh->fetch_and_store( $github_user => $github_repo, $last_updated );
+if( $verbose ) {
+    print "Updated from $last_updated to " . $gh->last_check, "\n";
+};

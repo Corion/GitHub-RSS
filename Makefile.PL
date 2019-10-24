@@ -47,6 +47,7 @@ my %module = (
     },
 
     PREREQ_PM => {
+        'Data::Dumper'              => 0,
         'Filter::signatures'        => '0.09',
         'Carp'                      => 0,
         'PerlX::Maybe'              => 0,
