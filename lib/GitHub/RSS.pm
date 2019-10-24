@@ -98,13 +98,30 @@ sub _read_gh_token( $self, $token_file=undef ) {
     }
 }
 
-sub fetch_issues( $self, $user = $self->default_user, $repo = $self->default_repo ) {
+sub fetch_all_issues( $self,
+    $user = $self->default_user,
+    $repo = $self->default_repo,
+    $since=undef ) {
+    my @issues = $self->fetch_issues( $user, $repo, $since );
     my $gh = $self->gh;
-    my @issues = $gh->issue->repos_issues($user => $repo);
     while ($gh->issue->has_next_page) {
         push @issues, $gh->issue->next_page;
     }
-    return @issues
+    @issues
+}
+
+sub fetch_issues( $self,
+    $user = $self->default_user,
+    $repo = $self->default_repo,
+    $since=undef ) {
+    my $gh = $self->gh;
+    warn "Fetching since '$since'";
+    my @issues = $gh->issue->repos_issues($user => $repo,
+                                          { sort => 'updated',
+                                          direction => 'asc', # so we can interrupt any time
+                                          maybe since => $since,
+                                          }
+                                         );
 };
 
 sub fetch_issue_comments( $self, $issue_number,
@@ -117,7 +134,7 @@ sub fetch_issue_comments( $self, $issue_number,
 
 sub write_data( $self, $table, @rows) {
     my @columns = sort keys %{ $rows[0] };
-    my $statement = sprintf q{insert into "%s" (%s) values (%s)},
+    my $statement = sprintf q{replace into "%s" (%s) values (%s)},
                         $table,
                         join( ",", map qq{"$_"}, @columns ),
                         join( ",", ('?') x (0+@columns))
@@ -129,19 +146,9 @@ sub write_data( $self, $table, @rows) {
     #};
 }
 
-sub fetch_and_store( $self,
-                     $user = $self->default_user,
-                     $repo = $self->default_repo) {
-    my $dbh = $self->dbh;
-
-    # Throw old data away instead of keeping it for diffs
-    # We should do this per-user, per-repository, or do REPLACE instead
-    $dbh->do("delete from $_") for (qw(issue comment));
-
-    my @issues = $self->fetch_issues( $user => $repo );
-
+sub store_issues_comments( $self, $user, $repo, $issues ) {
     # Munge some columns:
-    for (@issues) {
+    for (@$issues) {
         my $u = delete $_->{user};
         @{ $_ }{qw( user_id user_login user_gravatar_id )}
             = @{ $u }{qw( id login gravatar_id )};
@@ -152,9 +159,9 @@ sub fetch_and_store( $self,
         };
     };
 
-    $self->write_data( 'issue' => @issues );
-
-    for my $issue (@issues) {
+    for my $issue (@$issues) {
+        #$|=1;
+        #print sprintf "% 6d %s\r", $issue->{number}, $issue->{updated_at};
         my @comments = $self->fetch_issue_comments( $issue->{number}, $user => $repo );
 
         # Squish all structure into JSON, for later
@@ -166,6 +173,32 @@ sub fetch_and_store( $self,
         $self->write_data( 'comment' => @comments )
             if @comments;
     };
+
+    # We wrote the comments first so we will refetch them if there is a problem
+    # when writing the issue
+    $self->write_data( 'issue' => @$issues );
+};
+
+sub fetch_and_store( $self,
+                     $user  = $self->default_user,
+                     $repo  = $self->default_repo,
+                     $since = undef) {
+    my $dbh = $self->dbh;
+    my $gh = $self->gh;
+
+    # Throw old data away instead of keeping it for diffs
+    # We should do this per-user, per-repository, or do REPLACE instead
+    #$dbh->do("delete from $_") for (qw(issue comment));
+
+    my @issues = $self->fetch_issues( $user => $repo, $since );
+    $self->store_issues_comments( $user => $repo, \@issues );
+
+# Meh - we lose the information here since we fetch the comments immediately.
+# Oh well ...
+    while ($gh->issue->has_next_page) {
+        @issues = $gh->issue->next_page;
+        $self->store_issues_comments( $user => $repo, \@issues );
+    }
 }
 
 sub comments( $self ) {
@@ -179,6 +212,21 @@ sub comments( $self ) {
           from comment
       order by html_url
 SQL
+}
+
+sub last_check( $self,
+                $user = $self->default_user,
+                $repo = $self->default_repo ) {
+    my $last = $self->dbh->selectall_arrayref(<<'SQL', { Slice => {} });
+        select
+            max(updated_at) as updated_at
+          from issue
+SQL
+    if( @$last ) {
+        return $last->[0]->{updated_at}
+    } else {
+        return undef # empty DB
+    }
 }
 
 1;

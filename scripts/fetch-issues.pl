@@ -25,4 +25,5 @@ my $gh = GitHub::RSS->new(
     },
 );
 
-$gh->fetch_and_store( $github_user => $github_repo );
+my $last_updated = $gh->last_check;
+$gh->fetch_and_store( $github_user => $github_repo, $last_updated );
