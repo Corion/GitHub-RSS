@@ -66,10 +66,17 @@ my @comments = map {
     $entry->content( $body );
     $entry->author( $_->{user}->{login} );
 
-    my $modified_or_created = DateTime::Format::ISO8601->parse_datetime(
-        $_->{modified_at} || $_->{created_at}
+    if( $_->{modified_at} ) {
+        my $modified = DateTime::Format::ISO8601->parse_datetime(
+            $_->{modified_at}
+        );
+        $entry->modified( $modified );
+    };
+
+    my $created = DateTime::Format::ISO8601->parse_datetime(
+        $_->{created_at}
     );
-    $entry->modified( $modified_or_created );
+    $entry->issued( $created );
 
     $feed->add_entry( $entry );
 } $gh->comments(
