@@ -191,17 +191,16 @@ sub fetch_and_store( $self,
     # We should do this per-user, per-repository, or do REPLACE instead
     #$dbh->do("delete from $_") for (qw(issue comment));
 
+FETCH:
     my @issues = $self->fetch_issues( $user => $repo, $since );
     my $has_more = $gh->issue->has_next_page;
     $self->store_issues_comments( $user => $repo, \@issues );
 
 # Meh - we lose the information here since we fetch the comments immediately.
 # Oh well ...
-    while ($has_more) {
-        @issues = $gh->issue->next_page;
-        $has_more = $gh->issue->has_next_page;
-
-        $self->store_issues_comments( $user => $repo, \@issues );
+    if( $has_more ) {
+        $since = $issues[-1]->{updated_at};
+        goto FETCH;
     }
 }
 
