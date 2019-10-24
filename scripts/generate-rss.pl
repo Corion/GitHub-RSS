@@ -10,6 +10,7 @@ use GitHub::RSS;
 use XML::Feed;
 use DateTime;
 use DateTime::Format::ISO8601;
+use POSIX 'strftime';
 use Text::Markdown;
 
 GetOptions(
@@ -28,6 +29,8 @@ my $gh = GitHub::RSS->new(
         dsn => "dbi:SQLite:dbname=$store",
     },
 );
+
+my $since = strftime '%Y-%m-%dT%H:%M:%SZ', gmtime(time()-10*3600*24);
 
 my $feed = XML::Feed->new('RSS');
 $feed->title("Github comments for $github_user/$github_repo");
@@ -54,6 +57,7 @@ my @comments = map {
     $feed->add_entry( $entry );
 } $gh->comments(
     #Perl => 'perl5'
+    $since,
     );
 
 open my $fh, '>', $output_file

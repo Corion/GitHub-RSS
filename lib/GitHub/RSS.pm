@@ -200,15 +200,17 @@ sub fetch_and_store( $self,
     }
 }
 
-sub comments( $self ) {
+sub comments( $self, $since ) {
     map {
         $_->{user} = decode_json( $_->{user} );
         $_
     }
-    @{ $self->dbh->selectall_arrayref(<<'SQL', { Slice => {}}) }
+    @{ $self->dbh->selectall_arrayref(<<'SQL', { Slice => {}}, $since) }
         select
-               * -- this should become an exact list, later
-          from comment
+               c.* -- this should become an exact list, later
+          from comment c
+          join issue i on c.issue_url=i.url
+         where i.updated_at >= ?
       order by html_url
 SQL
 }
