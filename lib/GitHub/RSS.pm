@@ -115,7 +115,6 @@ sub fetch_issues( $self,
     $repo = $self->default_repo,
     $since=undef ) {
     my $gh = $self->gh;
-    warn "Fetching since '$since'";
     my @issues = $gh->issue->repos_issues($user => $repo,
                                           { sort => 'updated',
                                           direction => 'asc', # so we can interrupt any time
