@@ -215,7 +215,7 @@ sub comments( $self, $since ) {
           from comment c
           join issue i on c.issue_url=i.url
          where i.updated_at >= ?
-      order by html_url
+      order by i.updated_at, html_url
 SQL
 }
 
