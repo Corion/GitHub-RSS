@@ -13,6 +13,24 @@ use DateTime::Format::ISO8601;
 use POSIX 'strftime';
 use Text::Markdown;
 
+our $VERSION = '0.01';
+
+
+=head1 SYNOPSIS
+
+  generate-rss.pl --user Perl --repo perl5 --dbfile=db/issues.sqlite --output-file Perl-perl5-issues.rss
+
+=head1 OPTIONS
+
+    --token         GitHub API token
+    --token-file    filename containing JSON with the GitHub API token
+    --user          GitHub user of repository to fetch
+    --repo          GitHub repository containing the issues and comments
+    --dbfile        Name of the SQLite database to provide the issues
+    --output-file   Name of the RSS output file
+
+=cut
+
 GetOptions(
     'filter=s' => \my $issue_regex,
     'issue=s' => \my $github_issue,
