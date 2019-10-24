@@ -37,6 +37,12 @@ GitHub::RSS - collect data from Github.com for feeding into RSS
 
 =head2 C<< ->new >>
 
+  my $gh = GitHub::RSS->new(
+      dbh => {
+          dsn => 'dbi:SQLite:dbname=db/issues.sqlite',
+      },
+  );
+
 Constructs a new GitHub::RSS instance
 
 =over 4
@@ -196,6 +202,10 @@ sub fetch_issues( $self,
                                          );
 };
 
+=head2 C<< ->fetch_issue_comments >>
+
+=cut
+
 sub fetch_issue_comments( $self, $issue_number,
         $user=$self->default_user,
         $repo=$self->default_repo
@@ -253,6 +263,16 @@ sub store_issues_comments( $self, $user, $repo, $issues ) {
     $self->write_data( 'issue' => @$issues );
 };
 
+=head2 C<< ->fetch_and_store >>
+
+  my $since = $gh->last_check;
+  $gh->fetch_and_store($user, $repo, $since)
+
+Fetches all issues and comments modified after the C<$since> timestamp.
+If C<$since> is missing or C<undef>, all issues will be retrieved.
+
+=cut
+
 sub fetch_and_store( $self,
                      $user  = $self->default_user,
                      $repo  = $self->default_repo,
@@ -302,6 +322,16 @@ sub issues_and_comments( $self, $since ) {
       order by i.updated_at, html_url
 SQL
 }
+
+=head2 C<< ->last_check >>
+
+  my $since = $gh->last_check;
+
+Returns the timestamp of the last stored modification or C<undef>
+if no issue or comment is stored.
+
+=cut
+
 
 sub last_check( $self,
                 $user = $self->default_user,
