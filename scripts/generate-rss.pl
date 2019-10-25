@@ -61,8 +61,8 @@ my @comments = map {
     $entry->link( $_->{html_url} );
 
     # Convert from md to html, url-encode
-    #my $body = Text::Markdown->new->markdown( $_->{body} );
-    my $body = $_->{body};
+    my $body = Text::Markdown->new->markdown( $_->{body} );
+    #my $body = $_->{body};
     $entry->content( $body );
     $entry->author( $_->{user}->{login} );
 
