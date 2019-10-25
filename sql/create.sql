@@ -27,6 +27,7 @@ create table "issue" (
   , "labels" varchar(16384)
   , "assignees" varchar(16384)
   , "pull_request" varchar(16384)
+  , "closed_by" varchar(16384)
 );
 
 create table "comment" (

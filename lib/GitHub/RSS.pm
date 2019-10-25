@@ -296,9 +296,15 @@ FETCH:
     }
 }
 
+sub inflate_fields( $self, $item, @fields ) {
+    for (@fields) {
+        $item->{$_} = $item->{$_} ? decode_json( $item->{$_} ) : $item->{$_};
+    }
+}
+
 sub issues_and_comments( $self, $since ) {
     map {
-        $_->{user} = $_->{user} ? decode_json( $_->{user} ) : +{};
+        $self->inflate_fields( $_, qw(user closed_by));
         $_
     }
     @{ $self->dbh->selectall_arrayref(<<'SQL', { Slice => {}}, $since, $since) }
@@ -332,7 +338,7 @@ SQL
 
 sub issues_with_patches( $self ) {
     map {
-        $_->{user} = $_->{user} ? decode_json( $_->{user} ) : +{};
+        $self->inflate_fields( $_, qw(user closed_by));
         $_
     }
     @{ $self->dbh->selectall_arrayref(<<'SQL', { Slice => {}}) }
