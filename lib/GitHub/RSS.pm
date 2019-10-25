@@ -325,6 +325,40 @@ sub issues_and_comments( $self, $since ) {
 SQL
 }
 
+sub issues_with_patches( $self ) {
+    map {
+        $_->{user} = $_->{user} ? decode_json( $_->{user} ) : +{};
+        $_
+    }
+    @{ $self->dbh->selectall_arrayref(<<'SQL', { Slice => {}}) }
+        select distinct
+               i.* -- later, expand to explicit list
+          from issue i
+          join comment c on c.issue_url=i.url
+         where c.body like '%```diff%`
+           and i.state = 'open'
+SQL
+}
+
+sub issue( $self, $issue ) {
+    $self->dbh->selectall_arrayref(<<'SQL', { Slice => {}}, $issue)->[0]
+        select
+               * -- later, expand to explicit list
+          from issue i
+         where i.number = ?
+SQL
+}
+
+sub comments( $self, $issue ) {
+    @{ $self->dbh->selectall_arrayref(<<'SQL', { Slice => {}}, $issue) }
+        select
+               c.* -- later, expand to explicit list
+          from comment c
+          join issue i on c.issue_url=i.url
+         where i.number = ?
+SQL
+}
+
 =head2 C<< ->last_check >>
 
   my $since = $gh->last_check;
