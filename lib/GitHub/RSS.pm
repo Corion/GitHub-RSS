@@ -308,6 +308,8 @@ sub issues_and_comments( $self, $since ) {
              , i.body
              , i.created_at
              , i.updated_at
+             , i.title as issue_title
+             , i.number as issue_number
           from issue i
          where i.updated_at >= ?
       union all
@@ -318,6 +320,8 @@ sub issues_and_comments( $self, $since ) {
              , c.body
              , c.created_at
              , c.updated_at
+             , i.title as issue_title
+             , i.number as issue_number
           from comment c
           join issue i on c.issue_url=i.url
          where i.updated_at >= ?

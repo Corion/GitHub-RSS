@@ -48,7 +48,7 @@ This is relevant when catching up a database for a repository with many issues.
 
 ## `->fetch_issue_comments`
 
-## `->fetch_and_store`
+## `->fetch_and_store($user, $repo, $since)`
 
     my $since = $gh->last_check;
     $gh->fetch_and_store($user, $repo, $since)

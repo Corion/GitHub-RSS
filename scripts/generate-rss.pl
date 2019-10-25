@@ -60,10 +60,19 @@ my @comments = map {
     $entry->title( "Comment by $_->{user}->{login}" );
     $entry->link( $_->{html_url} );
 
+    my $issue = $gh->issue( $_->{issue_number} );
+
+    my $footer = <<HTML;
+<footer>
+<a href="$issue->{html_url}">$issue->{title}</a> on GitHub
+Created by <a href="https://github.com/Corion/GitHub-RSS">GitHub::RSS</a>
+</footer>
+HTML
+
     # Convert from md to html, url-encode
     my $body = Text::Markdown->new->markdown( $_->{body} );
     #my $body = $_->{body};
-    $entry->content( $body );
+    $entry->content( $body . $footer );
     $entry->author( $_->{user}->{login} );
 
     if( $_->{updated_at} ) {
