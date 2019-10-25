@@ -46,12 +46,17 @@ my $gh = GitHub::RSS->new(
     },
 );
 
-my $last_updated = $gh->last_check;
-$gh->fetch_and_store( $github_user => $github_repo, $last_updated );
-if( $verbose ) {
-    if( $last_updated eq $gh->last_check ) {
-        print "Up to date as of $last_updated\n";
-    } else {
-        print "Updated from $last_updated to " . $gh->last_check, "\n";
+if( @ARGV ) {
+    $gh->refetch_issues( $github_user => $github_repo, @ARGV );
+
+} else {
+    my $last_updated = $gh->last_check;
+    $gh->fetch_and_store( $github_user => $github_repo, $last_updated );
+    if( $verbose ) {
+        if( $last_updated eq $gh->last_check ) {
+            print "Up to date as of $last_updated\n";
+        } else {
+            print "Updated from $last_updated to " . $gh->last_check, "\n";
+        };
     };
-};
+}

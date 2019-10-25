@@ -296,6 +296,17 @@ FETCH:
     }
 }
 
+sub refetch_issues( $self,
+                     $user  = $self->default_user,
+                     $repo  = $self->default_repo,
+                     @issue_numbers) {
+    my $dbh = $self->dbh;
+    my $gh = $self->gh;
+
+    my @issues = map { scalar $gh->issue->issue($user => $repo, $_) } @issue_numbers;
+    $self->store_issues_comments( $user => $repo, \@issues );
+}
+
 sub inflate_fields( $self, $item, @fields ) {
     for (@fields) {
         $item->{$_} = $item->{$_} ? decode_json( $item->{$_} ) : $item->{$_};
