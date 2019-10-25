@@ -199,6 +199,7 @@ sub fetch_issues( $self,
     my @issues = $gh->issue->repos_issues($user => $repo,
                                           { sort => 'updated',
                                           direction => 'asc', # so we can interrupt any time
+                                          state => 'all', # so we find issues that got closed
                                           maybe since => $since,
                                           }
                                          );
