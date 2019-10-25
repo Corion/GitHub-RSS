@@ -339,7 +339,7 @@ sub issues_with_patches( $self ) {
                i.* -- later, expand to explicit list
           from issue i
           join comment c on c.issue_url=i.url
-         where c.body like '%```diff%`
+         where c.body like '%```diff%'
            and i.state = 'open'
 SQL
 }
