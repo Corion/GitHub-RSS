@@ -348,6 +348,7 @@ sub issues_with_patches( $self ) {
           join comment c on c.issue_url=i.url
          where c.body like '%```diff%'
            and i.state = 'open'
+      order by i.url
 SQL
 }
 
@@ -357,6 +358,7 @@ sub issue( $self, $issue ) {
                * -- later, expand to explicit list
           from issue i
          where i.number = ?
+      order by i.url
 SQL
 }
 
@@ -367,6 +369,7 @@ sub comments( $self, $issue ) {
           from comment c
           join issue i on c.issue_url=i.url
          where i.number = ?
+      order by c.url
 SQL
 }
 
