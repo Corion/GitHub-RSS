@@ -70,8 +70,9 @@ Created by <a href="https://github.com/Corion/GitHub-RSS">GitHub::RSS</a>
 HTML
 
     # Convert from md to html, url-encode
-    my $body = Text::Markdown->new->markdown( $_->{body} );
-    #my $body = $_->{body};
+    my $content = $_->{body};
+    $content =~ s![\x00-\x08\x0B\x0C\x0E-\x1f]!.!g;
+    my $body = Text::Markdown->new->markdown( $content );
     $entry->content( $body . $footer );
     $entry->author( $_->{user}->{login} );
 
