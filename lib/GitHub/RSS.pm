@@ -113,6 +113,16 @@ has default_repo => (
 B<dbh> - premade database handle or alternatively a hashref containing
 the L<DBI> arguments
 
+  dbh => $dbh,
+
+or alternatively
+
+  dbh => {
+      user     => 'scott',
+      password => 'tiger',
+      dsn      => 'dbi:SQLite:dbname=db/issues.sqlite',
+  }
+
 =cut
 
 has dbh => (
@@ -120,6 +130,12 @@ has dbh => (
     required => 1,
     coerce   => \&_build_dbh,
 );
+
+sub _build_dbh( $args ) {
+    return $args if ref($args) eq 'DBI::db';
+    ref($args) eq 'HASH' or die 'Not a DB handle nor a hashref';
+    return DBI->connect( @{$args}{qw/dsn user password options/} );
+}
 
 =item *
 
@@ -134,12 +150,6 @@ has fetch_additional_pages => (
     is => 'ro',
     default => '1',
 );
-
-sub _build_dbh( $args ) {
-    return $args if ref($args) eq 'DBI::db';
-    ref($args) eq 'HASH' or die 'Not a DB handle nor a hashref';
-    return DBI->connect( @{$args}{qw/dsn db_user db_password db_options/} );
-}
 
 sub _find_gh_token_file( $self, $env=undef ) {
     $env //= \%ENV;
