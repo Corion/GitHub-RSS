@@ -71,7 +71,9 @@ HTML
 
     # Convert from md to html, url-encode
     my $content = $_->{body};
-    $content =~ s![\x00-\x08\x0B\x0C\x0E-\x1f]!.!g;
+    if( $content =~ s![\x00-\x08\x0B\x0C\x0E-\x1F]!.!g ){
+        warn "Cleaned up $_->{id}: $content";
+    };
     my $body = Text::Markdown->new->markdown( $content );
     $entry->content( $body . $footer );
     $entry->author( $_->{user}->{login} );
