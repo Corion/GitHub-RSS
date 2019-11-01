@@ -73,7 +73,7 @@ HTML
     my $content = $_->{body};
     $content =~ s![\x00-\x08\x0B\x0C\x0E-\x1F]!.!g;
     my $body = Text::Markdown->new->markdown( $content );
-    $entry->content( $body . $footer );
+    $entry->content( $body );
     $entry->author( $_->{user}->{login} );
 
     if( $_->{updated_at} ) {
