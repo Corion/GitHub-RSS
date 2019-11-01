@@ -54,7 +54,9 @@ $feed->title("Github comments for $github_user/$github_repo");
 $feed->link("https://github.com/$github_user/$github_repo");
 #$feed->self("https://corion.net/github-rss/Perl-perl5.rss");
 
-my @comments = map {
+my @comments =
+    map {
+
     my $entry = XML::Feed::Entry->new('RSS');
     $entry->id( $_->{id} );
     $entry->title( "Comment by $_->{user}->{login}" );
@@ -71,6 +73,7 @@ HTML
 
     # Convert from md to html, url-encode
     my $content = $_->{body};
+    $content =~ s!\\(.)!$1!g; # unquote, because Github sends us quotemeta'd content?!
     $content =~ s![\x00-\x08\x0B\x0C\x0E-\x1F]!.!g;
     my $body = Text::Markdown->new->markdown( $content );
     $entry->content( $body );
@@ -89,7 +92,8 @@ HTML
     $entry->issued( $created );
 
     $feed->add_entry( $entry );
-} $gh->issues_and_comments(
+}
+ $gh->issues_and_comments(
     #Perl => 'perl5'
     $since,
     );
