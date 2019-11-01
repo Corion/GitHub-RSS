@@ -76,7 +76,7 @@ HTML
     $content =~ s!\\(.)!$1!g; # unquote, because Github sends us quotemeta'd content?!
     $content =~ s![\x00-\x08\x0B\x0C\x0E-\x1F]!.!g;
     my $body = Text::Markdown->new->markdown( $content );
-    $entry->content( $body );
+    $entry->content( $body . $footer );
     $entry->author( $_->{user}->{login} );
 
     if( $_->{updated_at} ) {
