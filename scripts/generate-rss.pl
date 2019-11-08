@@ -12,6 +12,7 @@ use DateTime;
 use DateTime::Format::ISO8601;
 use POSIX 'strftime';
 use Text::Markdown;
+use HTML::Entities 'encode_entities';
 
 our $VERSION = '0.01';
 
@@ -54,6 +55,12 @@ $feed->title("Github comments for $github_user/$github_repo");
 $feed->link("https://github.com/$github_user/$github_repo");
 #$feed->self("https://corion.net/github-rss/Perl-perl5.rss");
 
+sub verbatim_section( $s ) {
+    my $res = encode_entities($s);
+    $res =~ s! !&nbsp;!g;
+    return "<code>$res</code>";
+}
+
 my @comments =
     map {
 
@@ -64,9 +71,14 @@ my @comments =
 
     my $issue = $gh->issue( $_->{issue_number} );
 
+    my $header = <<HTML;
+<header>
+<a href="$issue->{html_url}">$issue->{title}</a> on GitHub
+</header>
+HTML
     my $footer = <<HTML;
 <footer>
-<a href="$issue->{html_url}">$issue->{title}</a> on GitHub
+<hr />
 Created by <a href="https://github.com/Corion/GitHub-RSS">GitHub::RSS</a>
 </footer>
 HTML
@@ -75,8 +87,12 @@ HTML
     my $content = $_->{body};
     $content =~ s!\\(.)!$1!g; # unquote, because Github sends us quotemeta'd content?!
     $content =~ s![\x00-\x08\x0B\x0C\x0E-\x1F]!.!g;
+
+    # render ```...``` into verbatim code:
+    $content =~ s!^\`\`\`(.*?)\`\`\`!verbatim_section($1)!msge;
+
     my $body = Text::Markdown->new->markdown( $content );
-    $entry->content( $body . $footer );
+    $entry->content( join "", $header, $body, $footer );
     $entry->author( $_->{user}->{login} );
 
     if( $_->{updated_at} ) {

@@ -58,6 +58,7 @@ my %module = (
         'XML::RSS'                  => 0,
         'XML::Feed'                 => 0,
         'Text::Markdown'            => 0,
+        'HTML::Entities'            => 0, # because we (re)render some markdown ourselves
 		'DateTime'                  => 0,
 		'DateTime::Format::ISO8601' => 0,
     },
