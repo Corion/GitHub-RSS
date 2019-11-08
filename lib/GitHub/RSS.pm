@@ -33,6 +33,14 @@ GitHub::RSS - collect data from Github.com for feeding into RSS
         print "Updated from $last_updated to " . $gh->last_check, "\n";
     };
 
+=head1 DESCRIPTION
+
+This module provides a cache database for GitHub issues and scripts to
+periodically update the database from GitHub.
+
+This is mainly used for creating an RSS feed from the database, hence the
+name.
+
 =head1 METHODS
 
 =head2 C<< ->new >>

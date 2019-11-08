@@ -20,6 +20,14 @@ GitHub::RSS - collect data from Github.com for feeding into RSS
         print "Updated from $last_updated to " . $gh->last_check, "\n";
     };
 
+# DESCRIPTION
+
+This module provides a cache database for GitHub issues and scripts to
+periodically update the database from GitHub.
+
+This is mainly used for creating an RSS feed from the database, hence the
+name.
+
 # METHODS
 
 ## `->new`
@@ -43,6 +51,17 @@ it from the `token_file`.
 - **default\_repo** - name of the GitHub repo whose issues will be read
 - **dbh** - premade database handle or alternatively a hashref containing
 the [DBI](https://metacpan.org/pod/DBI) arguments
+
+        dbh => $dbh,
+
+    or alternatively
+
+        dbh => {
+            user     => 'scott',
+            password => 'tiger',
+            dsn      => 'dbi:SQLite:dbname=db/issues.sqlite',
+        }
+
 - **fetch\_additional\_pages** - number of additional pages to fetch from GitHub.
 This is relevant when catching up a database for a repository with many issues.
 
