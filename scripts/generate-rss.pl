@@ -73,7 +73,7 @@ my @comments =
 
     my $header = <<HTML;
 <header>
-<a href="$issue->{html_url}">$issue->{title}</a> on GitHub
+<a href="$issue->{html_url}">$issue->{title}</a> in <a href="https://github.com/$user/$repo">$user/$repo</a>
 </header>
 HTML
     my $footer = <<HTML;
