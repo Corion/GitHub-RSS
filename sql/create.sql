@@ -28,6 +28,7 @@ create table "issue" (
   , "assignees" varchar(16384)
   , "pull_request" varchar(16384)
   , "closed_by" varchar(16384)
+  , "active_lock_reason" varchar(1024)
 );
 
 create table "comment" (
