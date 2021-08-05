@@ -13,7 +13,7 @@ use JSON;
 
 use Data::Dumper;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 NAME
 

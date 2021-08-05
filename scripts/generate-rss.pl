@@ -84,7 +84,7 @@ Created by <a href="https://github.com/Corion/GitHub-RSS">GitHub::RSS</a>
 HTML
 
     # Convert from md to html, url-encode
-    my $content = $_->{body};
+    my $content = $_->{body} || '';
     $content =~ s!\\(.)!$1!g; # unquote, because Github sends us quotemeta'd content?!
     $content =~ s![\x00-\x08\x0B\x0C\x0E-\x1F]!.!g;
 
