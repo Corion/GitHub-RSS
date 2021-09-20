@@ -29,6 +29,7 @@ create table "issue" (
   , "pull_request" varchar(16384)
   , "closed_by" varchar(16384)
   , "active_lock_reason" varchar(1024)
+  , "timeline_url" varchar(1024)
 );
 
 create table "comment" (
