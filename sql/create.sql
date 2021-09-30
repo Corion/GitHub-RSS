@@ -31,6 +31,7 @@ create table "issue" (
   , "active_lock_reason" varchar(1024)
   , "timeline_url" varchar(1024)
   , "reactions" varchar(1024)
+  , "performed_via_github_app" varchar(1024)
 );
 
 create table "comment" (
