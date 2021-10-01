@@ -45,5 +45,6 @@ create table "comment" (
    ,"updated_at" datetime
    ,"url" varchar(1024)
    ,"user" varchar(16384)
-  , "performed_via_github_app" varchar(1024)
+   , "reactions" varchar(1024)
+   , "performed_via_github_app" varchar(1024)
 );
