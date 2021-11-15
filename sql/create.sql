@@ -32,6 +32,7 @@ create table "issue" (
   , "timeline_url" varchar(1024)
   , "reactions" varchar(1024)
   , "performed_via_github_app" varchar(1024)
+  , "draft" varchar(1024)
 );
 
 create table "comment" (
