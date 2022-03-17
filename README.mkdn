@@ -40,7 +40,7 @@ name.
 
 Constructs a new GitHub::RSS instance
 
-- **gh** - instance of [Net::GitHub](https://metacpan.org/pod/Net::GitHub)
+- **gh** - instance of [Net::GitHub](https://metacpan.org/pod/Net%3A%3AGitHub)
 - **token\_file** - name and path of the JSON-format token file containing the
 GitHub API token By default, that file is searched for under the name
 `github.credentials` in `.`, `$ENV{XDG_DATA_HOME}`, `$ENV{USERPROFILE}`

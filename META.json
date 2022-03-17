@@ -4,7 +4,7 @@
       "Max Maischein <corion@cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "ExtUtils::MakeMaker version 7.34, CPAN::Meta::Converter version 2.150010",
+   "generated_by" : "ExtUtils::MakeMaker version 7.44, CPAN::Meta::Converter version 2.150010",
    "license" : [
       "perl_5"
    ],
@@ -38,6 +38,7 @@
             "DateTime" : "0",
             "DateTime::Format::ISO8601" : "0",
             "Filter::signatures" : "0.09",
+            "HTML::Entities" : "0",
             "JSON" : "0",
             "Moo" : "2",
             "Net::GitHub" : "0",
@@ -63,7 +64,7 @@
          "web" : "https://github.com/Corion/GitHub-RSS"
       }
    },
-   "version" : "0.01",
-   "x_serialization_backend" : "JSON::PP version 2.97001",
+   "version" : "0.02",
+   "x_serialization_backend" : "JSON::PP version 4.04",
    "x_static_install" : 1
 }
