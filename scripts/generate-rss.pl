@@ -14,7 +14,7 @@ use POSIX 'strftime';
 use Text::Markdown;
 use HTML::Entities 'encode_entities';
 
-our $VERSION = '0.01';
+our $VERSION = '0.03';
 
 =head1 SYNOPSIS
 
