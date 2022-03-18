@@ -2,6 +2,7 @@ package GitHub::RSS;
 use strict;
 use 5.010;
 use Moo 2;
+use Filter::signatures;
 use feature 'signatures';
 no warnings 'experimental::signatures';
 use PerlX::Maybe;
@@ -13,7 +14,7 @@ use JSON;
 
 use Data::Dumper;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 =head1 NAME
 
