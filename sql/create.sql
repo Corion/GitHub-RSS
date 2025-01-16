@@ -34,6 +34,7 @@ create table "issue" (
   , "performed_via_github_app" varchar(1024)
   , "draft" varchar(1024)
   , "state_reason" varchar(1024)
+  , "sub_issues_summary" varchar(1024)
 );
 
 create table "comment" (
