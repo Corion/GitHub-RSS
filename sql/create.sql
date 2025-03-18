@@ -35,6 +35,7 @@ create table "issue" (
   , "draft" varchar(1024)
   , "state_reason" varchar(1024)
   , "sub_issues_summary" varchar(1024)
+  , "type" varchar(1024)
 );
 
 create table "comment" (
