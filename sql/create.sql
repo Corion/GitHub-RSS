@@ -52,4 +52,5 @@ create table "comment" (
    ,"user" varchar(16384)
    , "reactions" varchar(1024)
    , "performed_via_github_app" varchar(1024)
+   , "pin" varchar(1024)
 );
