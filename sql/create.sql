@@ -37,6 +37,7 @@ create table "issue" (
   , "sub_issues_summary" varchar(1024)
   , "type" varchar(1024)
   , "issue_dependencies_summary" varchar(1024)
+  , "pinned_comment" varchar(1024)
 );
 
 create table "comment" (
