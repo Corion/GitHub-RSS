@@ -56,6 +56,7 @@ my %module = (
         'PerlX::Maybe'              => 0,
         'Moo'                       => 2,
         'Net::GitHub'               => 0,
+        'DBIx::RunSQL'              => 0,
         'DBD::SQLite'               => 0,
         'JSON'                      => 0,
         'XML::RSS'                  => 0,
