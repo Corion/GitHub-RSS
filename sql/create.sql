@@ -38,6 +38,7 @@ create table "issue" (
   , "type" varchar(1024)
   , "issue_dependencies_summary" varchar(1024)
   , "pinned_comment" varchar(1024)
+  , "issue_field_values" varchar(1024) -- actually an array, but ...
 );
 
 create table "comment" (
